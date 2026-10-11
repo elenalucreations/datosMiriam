@@ -1,80 +1,211 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conéctate al Wi-Fi de ElenaLu</title>
+  <meta name="theme-color" content="#111827">
+  <title>Datos para transferencia</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
-      text-align: center;
-      padding: 50px;
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, sans-serif;
+      background: #111827;
+      color: #f9fafb;
     }
+
+    .card {
+      width: 100%;
+      max-width: 400px;
+      padding: 28px 22px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #374151;
+      border-radius: 18px;
+      font-size: 28px;
+    }
+
     h1 {
-      color: #333;
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 25px;
     }
-    .btn {
-      display: inline-block;
-      padding: 12px 20px;
-      margin: 15px;
-      background: #007AFF;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    #qr {
-      max-width: 250px;
-      margin: 20px auto;
-      display: none;
-    }
-    .note {
+
+    .subtitle {
+      margin: 0 0 28px;
+      color: #9ca3af;
+      text-align: center;
       font-size: 14px;
-      color: #333;
-      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 18px;
+      padding: 16px;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 14px;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      color: #9ca3af;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .value {
+      margin-bottom: 14px;
+      font-size: 17px;
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .number {
+      font-size: 21px;
+      letter-spacing: 1px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    button {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #f9fafb;
+      color: #111827;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button.success {
+      background: #bbf7d0;
+      color: #14532d;
+    }
+
+    .footer {
+      margin: 20px 0 0;
+      color: #9ca3af;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #status {
+      min-height: 20px;
+      margin-top: 14px;
+      color: #86efac;
+      text-align: center;
+      font-size: 13px;
     }
   </style>
 </head>
+
 <body>
+  <main class="card">
+    <div class="icon" aria-hidden="true">↗</div>
 
-  <h1>Conéctate a ElenaLu12_5G</h1>
-  <p id="message">Detectando tu dispositivo...</p>
+    <h1>Datos para transferir</h1>
+    <p class="subtitle">
+      Copia los datos para realizar tu transferencia bancaria.
+    </p>
 
-  <a id="iosBtn" class="btn" href="wifi.mobileconfig" style="display:none;">
-    Descargar perfil de Wi-Fi (iPhone)
-  </a>
-  <p id="iosNote" class="note" style="display:none;">
-    Después de descargarlo, busca “perfil” desde la pantalla de inicio de tu iPhone, ⚙️Administración de disp. VPN y toca Instalar.
-  </p>
+    <section class="field">
+      <span class="label">Beneficiario</span>
+      <div class="value" id="name">Miriam Duarte García</div>
+      <button type="button" onclick="copyData('name', this)">
+        Copiar nombre
+      </button>
+    </section>
 
-  <a id="androidBtn" class="btn" href="intent:#Intent;action=android.settings.WIFI_SETTINGS;end" style="display:none;">
-    Abrir ajustes Wi-Fi (Android)
-  </a>
+    <section class="field">
+      <span class="label">Número de tarjeta</span>
+      <div class="value number" id="cardNumber">
+        1234567812345678
+      </div>
+      <button type="button" onclick="copyData('cardNumber', this)">
+        Copiar número de tarjeta
+      </button>
+    </section>
 
-  <div id="qrContainer" style="display:none;">
-    <p>Escanea este código QR desde otro dispositivo:</p>
-    <img id="qr" src="https://api.qrserver.com/v1/create-qr-code/?data=WIFI%3AT%3AWPA%3BS%3AElenaLu12_5G%3BP%3AElenaLu1202%3B%3B" alt="Código QR Wi-Fi">
-  </div>
+    <div id="status" role="status" aria-live="polite"></div>
+
+    <p class="footer">
+      Verifica el nombre del beneficiario y los datos antes
+      de confirmar tu transferencia.
+    </p>
+  </main>
 
   <script>
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    async function copyData(id, button) {
+      const value = document.getElementById(id).textContent.trim();
+      const originalText = button.textContent;
 
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-      document.getElementById('message').innerText = 'Estás usando un iPhone';
-      document.getElementById('iosBtn').style.display = 'inline-block';
-      document.getElementById('iosNote').style.display = 'block';
-    } else if (/android/i.test(ua)) {
-      document.getElementById('message').innerText = 'Estás usando un Android';
-      document.getElementById('androidBtn').style.display = 'inline-block';
-      document.getElementById('qrContainer').style.display = 'block';
-      document.getElementById('qr').style.display = 'block';
-    } else {
-      document.getElementById('message').innerText = 'Sistema no reconocido. Usa el QR.';
-      document.getElementById('qrContainer').style.display = 'block';
-      document.getElementById('qr').style.display = 'block';
+      try {
+        await navigator.clipboard.writeText(value);
+      } catch (error) {
+        // Alternativa para navegadores sin acceso al portapapeles.
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        const copied = document.execCommand("copy");
+        textarea.remove();
+
+        if (!copied) {
+          document.getElementById("status").textContent =
+            "No se pudo copiar. Mantén pulsado el dato para copiarlo.";
+          return;
+        }
+      }
+
+      button.textContent = "¡Copiado!";
+      button.classList.add("success");
+      document.getElementById("status").textContent =
+        "Dato copiado al portapapeles.";
+
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove("success");
+        document.getElementById("status").textContent = "";
+      }, 2000);
     }
   </script>
-
 </body>
 </html>
+```
